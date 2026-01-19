@@ -39,7 +39,7 @@ public class LanguageModel {
         // Reads just enough characters to form the first window
         for (int i = 0; i < windowLength; i++){
             char tempChar = in.readChar();
-            if (tempChar == '\r') {
+            if (tempChar != '\n' && (tempChar < 32 || tempChar > 126)) {
                 i--; 
                 continue;
             }
@@ -49,7 +49,7 @@ public class LanguageModel {
         while (!in.isEmpty()) {
             // Gets the next character
             c = in.readChar();
-            if (c == '\r') {
+            if (c != '\n' && (c < 32 || c > 126)) {
                 continue;
             }
             // Checks if the window is already in the map
@@ -123,13 +123,16 @@ public class LanguageModel {
         }
         String window = initialText.substring(initialText.length()-windowLength);
         String text = initialText;
-        while (text.length() < textLength) {
+        while (text.length() < textLength + windowLength) {
             List probs = CharDataMap.get(window);
             if (probs == null) {
                 return text;
             }
             else{
                 char charToAdd =  getRandomChar(probs);
+                if (charToAdd != '\n' && (charToAdd < 32 || charToAdd > 126)) {
+                    continue;
+                }
                 text += charToAdd;
                 window = window.substring(1) + charToAdd;
             }
