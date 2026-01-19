@@ -38,12 +38,20 @@ public class LanguageModel {
         In in = new In(fileName);
         // Reads just enough characters to form the first window
         for (int i = 0; i < windowLength; i++){
-            window += in.readChar();
+            char tempChar = in.readChar();
+            if (tempChar == '\r') {
+                i--; 
+                continue;
+            }
+            window += tempChar;        
         }
         // Processes the entire text, one character at a time
         while (!in.isEmpty()) {
             // Gets the next character
             c = in.readChar();
+            if (c == '\r') {
+                continue;
+            }
             // Checks if the window is already in the map
             List probs = CharDataMap.get(window);
             // If the window was not found in the map
